@@ -689,7 +689,21 @@
             disableForm(false);
         }
 
-	    
+	
+	var resetForm = function () {
+            $("#yname").val("");
+            $("#yemail").val("");
+            $("#ycomment").val("");
+         
+        }
+        resetForm();
+
+        var disableForm = function (boolean) {
+            $("#yname").prop("disabled", boolean);
+            $("#yemail").prop("disabled", boolean);
+            $("#ycomment").prop("disabled", boolean);
+        
+        }    
 
 	    
 
