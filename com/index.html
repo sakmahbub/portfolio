@@ -555,17 +555,19 @@
             data-delay=".5s"
             id="contact-form"
           >
-            <input placeholder="Name" type="text" name="name" required />
+            <input placeholder="Name" type="text" id="yname" name="name" required />
             <input
               placeholder="Enter email"
               type="email"
               name="email"
+	     id="yemail"
               required
             />
             <textarea
               placeholder="Your Message"
               type="text"
               name="message"
+	     id="ycomment"    
             ></textarea>
             <div id="success">
               <div>
@@ -594,6 +596,100 @@
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
 
+ $("#submit").on("click", function () {
+            var companyName = $("#yname").val();
+            var email = $("#yemail").val();
+			var comment = $("#ycomment").val();
+
+            if (companyName === "" || email === "") {
+
+                swal({
+                    title: "Please fill the required fields marked with '*'",
+                    text: "Name and Email can not be empty!",
+                    icon: "warning",
+                });
+
+            } else {
+
+
+                $("#submit").text("Loading...");
+                disableForm(true);
+
+              
+				
+				
+                var emailFrom = "";
+                if (companyName != "") {
+                    emailFrom = " from " + companyName;
+                }
+
+                var table = "<h1>Feedback" + emailFrom + "</h1>" +
+                    "<table>" +
+                    "<tr style='background-color: #ccc;'><td>Company name:</td><td> " + companyName + "</td></tr>" +
+					"<tr style='background-color: #ccc;'><td>Email:</td><td> " + email + "</td></tr>" +
+                    "<tr style='background-color: #ccc;'><td>COMMENTS & SUGGESTIONS:</td><td> " + comment + "</td></tr>" +
+                    "</table>";
+
+
+            
+
+                $.ajax({
+                    //url: "http://localhost:3000/send-email",
+					url: "http://203.202.252.242:3000/send-email",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        to: "sakmahbub@gmail.com,sakilcpa2@gmail.com",
+					
+                        subject: "Feedback" + emailFrom,
+                        html: table
+                    }),
+                    success: function (response) {
+                        // finished("Email sent successfully!");
+                        swal({
+                            title: "Thanks for your feedback!",
+                            text: "Feedback submitted successfully.",
+                            icon: "success",
+                        });
+                        resetForm();
+                    },
+                    error: function (xhr, status, error) {
+                        swal({
+                            title: "Error sending email",
+                            text: error,
+                            icon: "error",
+                        });
+                        disableForm(false);
+                        $("#submit").text("Submit");
+                    }
+                });
+
+
+            }
+
+        });
+		
+		 var finished = function (message) {
+            if (message === "OK") {
+                swal({
+                    title: "Thanks for your feedback!",
+                    text: "Feedback submitted successfully.",
+                    icon: "success",
+                });
+                resetForm();
+
+            } else {
+                swal({
+                    title: "Feedback submission unsuccessful!",
+                    text: message,
+                    icon: "error",
+                });
+            }
+            $("#submit").text("SUBMIT");
+            disableForm(false);
+        }
+
+	    
 
 	    
 
